@@ -16,12 +16,16 @@ def execute(filters=None):
 	iwb_map = get_item_warehouse_map(filters)
 
 	data = []
-	for (company, item, warehouse) in sorted(iwb_map):
-		qty_dict = iwb_map[(company, item, warehouse)]
+	
+	# 2016-10-21 RM Ajout du no de lot dans le rapport
+	for (company, item, warehouse, batch_no) in sorted(iwb_map):
+		# 2016-10-21 RM Ajout du no de lot dans le rapport
+		qty_dict = iwb_map[(company, item, warehouse, batch_no)]
 		data.append([item, item_map[item]["item_name"],
 			item_map[item]["item_group"],
 			item_map[item]["brand"],
-			item_map[item]["description"], warehouse,
+			# 2016-10-21 RM Ajout du no de lot dans le rapport
+			item_map[item]["description"], warehouse, batch_no,
 			item_map[item]["stock_uom"], qty_dict.opening_qty,
 			qty_dict.opening_val, qty_dict.in_qty,
 			qty_dict.in_val, qty_dict.out_qty,
@@ -42,6 +46,8 @@ def get_columns():
 		_("Brand")+"::90",
 		_("Description")+"::140",
 		_("Warehouse")+":Link/Warehouse:100",
+		# 2016-10-21 RM Ajout du no de lot dans le rapport
+		_("Batch No")+"::100",
 		_("Stock UOM")+":Link/UOM:90",
 		_("Opening Qty")+":Float:100",
 		_("Opening Value")+":Float:110",
@@ -81,7 +87,8 @@ def get_conditions(filters):
 
 def get_stock_ledger_entries(filters):
 	conditions = get_conditions(filters)
-	return frappe.db.sql("""select item_code, warehouse, posting_date, actual_qty, valuation_rate,
+	# 2016-10-21 RM Ajout du no de lot dans le rapport
+	return frappe.db.sql("""select item_code, warehouse, batch_no, posting_date, actual_qty, valuation_rate,
 			company, voucher_type, qty_after_transaction, stock_value_difference
 		from `tabStock Ledger Entry` sle force index (posting_sort_index)
 		where docstatus < 2 %s order by posting_date, posting_time, name""" %
@@ -95,7 +102,14 @@ def get_item_warehouse_map(filters):
 	sle = get_stock_ledger_entries(filters)
 
 	for d in sle:
-		key = (d.company, d.item_code, d.warehouse)
+		# 2016-10-21 RM Ajout du no de lot dans le rapport
+		if d.batch_no is None:
+			batch_no_temp = ""
+		else:
+			batch_no_temp = d.batch_no
+			
+			
+		key = (d.company, d.item_code, d.warehouse, batch_no_temp)
 		if key not in iwb_map:
 			iwb_map[key] = frappe._dict({
 				"opening_qty": 0.0, "opening_val": 0.0,
@@ -104,8 +118,9 @@ def get_item_warehouse_map(filters):
 				"bal_qty": 0.0, "bal_val": 0.0,
 				"val_rate": 0.0
 			})
-
-		qty_dict = iwb_map[(d.company, d.item_code, d.warehouse)]
+		
+		# 2016-10-21 RM Ajout du no de lot dans le rapport
+		qty_dict = iwb_map[(d.company, d.item_code, d.warehouse, batch_no_temp)]
 
 		if d.voucher_type == "Stock Reconciliation":
 			qty_diff = flt(d.qty_after_transaction) - qty_dict.bal_qty
