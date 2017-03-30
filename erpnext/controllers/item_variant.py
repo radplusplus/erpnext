@@ -18,13 +18,15 @@ def get_variant(template, args, variant=None):
 		:param item: Template Item
 		:param args: A dictionary with "Attribute" as key and "Attribute Value" as value
 	"""
+	frappe.errprint("get_variant - erpnext:")
 	if isinstance(args, basestring):
 		args = json.loads(args)
 
 	if not args:
 		frappe.throw(_("Please specify at least one attribute in the Attributes table"))
-
-	return find_variant(template, args, variant)
+	from radplusplus.radplusplus.doctype.item_variant_hashcode.item_variant_hashcode import get_variant
+	return get_variant(template, args, variant)
+	#return find_variant(template, args, variant)
 
 def validate_item_variant_attributes(item, args=None):
 	if isinstance(item, basestring):
