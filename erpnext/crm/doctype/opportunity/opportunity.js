@@ -37,6 +37,14 @@ frappe.ui.form.on("Opportunity", {
 					}, __("Make"));
 			}
 
+			// RENMAI - 2017-01-08 - Permet d'ajouter le bouton pour faire un appel d'offre directement d'une opportunité.
+			if(doc.with_items){
+				frm.add_custom_button(__('Request for Quotation'),
+					function() {
+						frm.trigger("make_request_for_quotation")
+					}, __("Make"));
+			}
+			
 			frm.add_custom_button(__('Quotation'),
 				cur_frm.cscript.create_quotation, __("Make"));
 
@@ -52,6 +60,14 @@ frappe.ui.form.on("Opportunity", {
 	make_supplier_quotation: function(frm) {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.crm.doctype.opportunity.opportunity.make_supplier_quotation",
+			frm: cur_frm
+		})
+	},
+	
+	// RENMAI - 2017-01-08 - Permet d'appeler la création d'un appel d'offre à partir de l'opportunité.
+	make_request_for_quotation: function(frm) {
+		frappe.model.open_mapped_doc({
+			method: "erpnext.crm.doctype.opportunity.opportunity.make_request_for_quotation",
 			frm: cur_frm
 		})
 	}
