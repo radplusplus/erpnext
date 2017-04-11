@@ -166,7 +166,6 @@ class ProductionOrder(Document):
 			self.db_set(fieldname, qty)
 
 	def before_submit(self):
-		frappe.errprint("before_sunbmit")
 		self.set_required_items()
 		self.make_time_logs()
 
