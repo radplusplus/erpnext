@@ -449,7 +449,7 @@ class ProductionOrder(Document):
 
 			d.db_set('transferred_qty', transferred_qty, update_modified = False)
 
-
+			
 @frappe.whitelist()
 def get_item_details(item):
 	res = frappe.db.sql("""select stock_uom, description
