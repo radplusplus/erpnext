@@ -476,7 +476,7 @@ frappe.ui.form.on('Stock Entry Detail', {
 						$.each(r.message, function(k, v) {
 							d[k] = v;
 						});
-						refresh_field("items");
+						refresh_field("items");					
 					}
 				}
 			});
