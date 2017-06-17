@@ -262,6 +262,26 @@ def make_supplier_quotation(source_name, target_doc=None):
 
 	return doclist
 
+# RENMAI - 2017-04-05 	
+@frappe.whitelist()
+def make_request_for_quotation(source_name, target_doc=None):
+	doclist = get_mapped_doc("Opportunity", source_name, {
+		"Opportunity": {
+			"doctype": "Request for Quotation",
+			"field_map": {
+				"name": "opportunity",
+			}
+		},
+		"Opportunity Item": {
+			"doctype": "Request for Quotation Item",
+			"field_map": {
+				"uom": "stock_uom"
+			}
+		}
+	}, target_doc)
+
+	return doclist
+	
 @frappe.whitelist()
 def set_multiple_status(names, status):
 	names = json.loads(names)

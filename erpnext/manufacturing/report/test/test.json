@@ -1,0 +1,18 @@
+{
+ "add_total_row": 0, 
+ "apply_user_permissions": 1, 
+ "creation": "2017-03-07 14:10:00.419578", 
+ "disabled": 0, 
+ "docstatus": 0, 
+ "doctype": "Report", 
+ "idx": 0, 
+ "is_standard": "Yes", 
+ "modified": "2017-03-07 14:10:00.419578", 
+ "modified_by": "Administrator", 
+ "module": "Manufacturing", 
+ "name": "test", 
+ "owner": "Administrator", 
+ "ref_doctype": "Production Order Operation", 
+ "report_name": "test", 
+ "report_type": "Report Builder"
+}

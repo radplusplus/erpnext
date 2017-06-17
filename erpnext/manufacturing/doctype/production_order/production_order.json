@@ -570,7 +570,7 @@
    "unique": 0
   }, 
   {
-   "allow_on_submit": 0, 
+   "allow_on_submit": 1, 
    "bold": 0, 
    "collapsible": 0, 
    "columns": 0, 
@@ -761,7 +761,7 @@
    "precision": "", 
    "print_hide": 0, 
    "print_hide_if_no_value": 0, 
-   "read_only": 1, 
+   "read_only": 0, 
    "remember_last_selected_value": 0, 
    "report_hide": 0, 
    "reqd": 0, 
@@ -1244,7 +1244,7 @@
  "issingle": 0, 
  "istable": 0, 
  "max_attachments": 0, 
- "modified": "2016-11-07 05:13:02.064821", 
+ "modified": "2017-04-18 10:46:42.751538", 
  "modified_by": "Administrator", 
  "module": "Manufacturing", 
  "name": "Production Order", 
@@ -1298,5 +1298,6 @@
  "read_only_onload": 0, 
  "sort_order": "ASC", 
  "title_field": "production_item", 
+ "track_changes": 0, 
  "track_seen": 0
 }

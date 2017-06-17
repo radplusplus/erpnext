@@ -6,6 +6,8 @@ import frappe
 from frappe import _
 from frappe.utils import flt, getdate
 
+print_debug = True
+
 def execute(filters=None):
 	if not filters: filters = {}
 
@@ -110,6 +112,8 @@ def get_item_warehouse_map(filters):
 			
 			
 		key = (d.company, d.item_code, d.warehouse, batch_no_temp)
+		if print_debug: frappe.errprint("key 1 : ")
+		if print_debug: frappe.errprint(key)
 		if key not in iwb_map:
 			iwb_map[key] = frappe._dict({
 				"opening_qty": 0.0, "opening_val": 0.0,
@@ -118,9 +122,15 @@ def get_item_warehouse_map(filters):
 				"bal_qty": 0.0, "bal_val": 0.0,
 				"val_rate": 0.0
 			})
+			
+		if print_debug: frappe.errprint("key 2 : ")
+		if print_debug: frappe.errprint(key)
 		
 		# 2016-10-21 RM Ajout du no de lot dans le rapport
 		qty_dict = iwb_map[(d.company, d.item_code, d.warehouse, batch_no_temp)]
+		
+		if print_debug: frappe.errprint("qty_dict : ")
+		if print_debug: frappe.errprint(qty_dict)
 
 		if d.voucher_type == "Stock Reconciliation":
 			qty_diff = flt(d.qty_after_transaction) - qty_dict.bal_qty
@@ -132,6 +142,8 @@ def get_item_warehouse_map(filters):
 		if d.posting_date < from_date:
 			qty_dict.opening_qty += qty_diff
 			qty_dict.opening_val += value_diff
+		
+		if print_debug: frappe.errprint("5 : ")
 
 		elif d.posting_date >= from_date and d.posting_date <= to_date:
 			if qty_diff > 0:
@@ -140,18 +152,22 @@ def get_item_warehouse_map(filters):
 			else:
 				qty_dict.out_qty += abs(qty_diff)
 				qty_dict.out_val += abs(value_diff)
+		
+		if print_debug: frappe.errprint("6 : ")
 
 		qty_dict.val_rate = d.valuation_rate
 		qty_dict.bal_qty += qty_diff
 		qty_dict.bal_val += value_diff
 		
+	if print_debug: frappe.errprint("iwb_map : ")
+	if print_debug: frappe.errprint(iwb_map)
 	iwb_map = filter_items_with_no_transactions(iwb_map)
 
 	return iwb_map
 	
 def filter_items_with_no_transactions(iwb_map):
-	for (company, item, warehouse) in sorted(iwb_map):
-		qty_dict = iwb_map[(company, item, warehouse)]
+	for (company, item, warehouse, batch_no) in sorted(iwb_map):
+		qty_dict = iwb_map[(company, item, warehouse, batch_no)]
 		
 		no_transactions = True
 		for key, val in qty_dict.items():
@@ -161,7 +177,7 @@ def filter_items_with_no_transactions(iwb_map):
 				no_transactions = False
 		
 		if no_transactions:
-			iwb_map.pop((company, item, warehouse))
+			iwb_map.pop((company, item, warehouse, batch_no))
 
 	return iwb_map
 
@@ -178,7 +194,8 @@ def get_item_details(filters):
 	return dict((d.name, d) for d in items)
 
 def validate_filters(filters):
+	# 2017-05-29 - RENMAI - Trop de resultat avec no de lot. Prends absolument un article ou entrepot.
 	if not (filters.get("item_code") or filters.get("warehouse")):
-		sle_count = flt(frappe.db.sql("""select count(name) from `tabStock Ledger Entry`""")[0][0])
-		if sle_count > 500000:
-			frappe.throw(_("Please set filter based on Item or Warehouse"))
+		# sle_count = flt(frappe.db.sql("""select count(name) from `tabStock Ledger Entry`""")[0][0])
+		# if sle_count > 500000:
+		frappe.throw(_("Please set filter based on Item or Warehouse"))

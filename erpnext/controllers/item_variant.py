@@ -6,6 +6,7 @@ import frappe
 from frappe import _
 from frappe.utils import cstr, flt
 import json
+import radplusplus
 
 class ItemVariantExistsError(frappe.ValidationError): pass
 class InvalidItemAttributeValueError(frappe.ValidationError): pass
@@ -18,13 +19,15 @@ def get_variant(template, args, variant=None):
 		:param item: Template Item
 		:param args: A dictionary with "Attribute" as key and "Attribute Value" as value
 	"""
+	
 	if isinstance(args, basestring):
 		args = json.loads(args)
 
 	if not args:
 		frappe.throw(_("Please specify at least one attribute in the Attributes table"))
-
-	return find_variant(template, args, variant)
+	from radplusplus.radplusplus.controllers.item_variant import get_variant as get_variant_radpp
+	return get_variant_radpp(template, args, variant)
+	#return find_variant(template, args, variant)
 
 def validate_item_variant_attributes(item, args=None):
 	if isinstance(item, basestring):
