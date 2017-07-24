@@ -142,7 +142,8 @@ class ProductionOrder(Document):
 				if stock_entries:
 					status = "In Process"
 					produced_qty = stock_entries.get("Manufacture")
-					if flt(produced_qty) == flt(self.qty):
+					# 2017-07-10 - RENMAI - de == a >= pour fermer meme si produit plus que planifie.
+					if flt(produced_qty) >= flt(self.qty):
 						status = "Completed"
 		else:
 			status = 'Cancelled'
@@ -159,7 +160,11 @@ class ProductionOrder(Document):
 				from `tabStock Entry` where production_order=%s and docstatus=1
 				and purpose=%s""", (self.name, purpose))[0][0])
 
-			if qty > self.qty:
+			# RENMAI - Permet de produire plus que la quantite du BT.
+			allowance_percentage = flt(frappe.db.get_single_value("Manufacturing Settings", "over_production_allowance_percentage"))
+			allowed_qty = flt(allowance_percentage/100 * self.qty) 
+		
+			if qty > allowed_qty:
 				frappe.throw(_("{0} ({1}) cannot be greater than planned quanitity ({2}) in Production Order {3}").format(\
 					self.meta.get_label(fieldname), qty, self.qty, self.name), StockOverProductionError)
 
@@ -340,13 +345,20 @@ class ProductionOrder(Document):
 		from erpnext.manufacturing.doctype.workstation.workstation import check_if_within_operating_hours
 		check_if_within_operating_hours(d.workstation, d.operation, d.planned_start_time, d.planned_end_time)
 
-	def update_operation_status(self):
+	def update_operation_status(self):		
+		# RENMAI - Permet de produire plus que la quantite du BT.
+		allowance_percentage = flt(frappe.db.get_single_value("Manufacturing Settings", "over_production_allowance_percentage"))
+		allowed_qty = flt(allowance_percentage/100 * self.qty) 
+		# RENMAI - Permet de fermer les operations meme si la quantite totale n'est pas atteinte.
+		quantite_complete = frappe.db.get_value("Stock Entry",{"purpose":"Manufacture","production_order":self.name,"quantite_finale":1,"docstatus":1},"name")
 		for d in self.get("operations"):
-			if not d.completed_qty:
+			if quantite_complete:
+				d.status = "Completed"
+			elif not d.completed_qty:
 				d.status = "Pending"
 			elif flt(d.completed_qty) < flt(self.qty):
 				d.status = "Work in Progress"
-			elif flt(d.completed_qty) == flt(self.qty):
+			elif flt(d.completed_qty) >= flt(self.qty) and flt(d.completed_qty) <= allowed_qty:
 				d.status = "Completed"
 			else:
 				frappe.throw(_("Completed Qty can not be greater than 'Qty to Manufacture'"))

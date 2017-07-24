@@ -105,7 +105,9 @@ class Timesheet(Document):
 	def validate_mandatory_fields(self):
 		if self.production_order:
 			production_order = frappe.get_doc("Production Order", self.production_order)
-			pending_qty = flt(production_order.qty) - flt(production_order.produced_qty)
+			# RENMAI - Permet de produire plus que la quantite du BT.
+			allowance_percentage = flt(frappe.db.get_single_value("Manufacturing Settings", "over_production_allowance_percentage"))
+			pending_qty = flt(allowance_percentage/100 * production_order.qty) - flt(production_order.produced_qty)
 
 		for data in self.time_logs:
 			if not data.from_time and not data.to_time:
