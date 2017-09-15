@@ -6,6 +6,7 @@
  "beta": 0, 
  "creation": "2013-04-09 11:43:55", 
  "custom": 0, 
+ "default_print_format": "R\u00e9sum\u00e9 d'arrivage", 
  "docstatus": 0, 
  "doctype": "DocType", 
  "document_type": "Document", 
@@ -1568,7 +1569,7 @@
  "issingle": 0, 
  "istable": 0, 
  "max_attachments": 0, 
- "modified": "2016-11-07 05:08:23.746175", 
+ "modified": "2017-08-15 09:49:26.355160", 
  "modified_by": "Administrator", 
  "module": "Stock", 
  "name": "Stock Entry", 
@@ -1666,5 +1667,6 @@
  "sort_field": "modified", 
  "sort_order": "DESC", 
  "title_field": "title", 
+ "track_changes": 0, 
  "track_seen": 0
 }

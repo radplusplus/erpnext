@@ -152,7 +152,8 @@ class StockEntry(StockController):
 							frappe.throw(_("Target warehouse in row {0} must be same as Production Order").format(d.idx))
 
 					else:
-						d.t_warehouse = None
+						# RENMAI - 2017-09-06 - pour permettre de remettre stock un lot reserve.
+						# d.t_warehouse = None
 						if not d.s_warehouse:
 							frappe.throw(_("Source warehouse is mandatory for row {0}").format(d.idx))
 

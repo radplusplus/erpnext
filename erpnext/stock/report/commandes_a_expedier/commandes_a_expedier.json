@@ -1,0 +1,19 @@
+{
+ "add_total_row": 0, 
+ "apply_user_permissions": 1, 
+ "creation": "2017-08-31 12:53:37.532711", 
+ "disabled": 0, 
+ "docstatus": 0, 
+ "doctype": "Report", 
+ "idx": 0, 
+ "is_standard": "Yes", 
+ "modified": "2017-08-31 12:53:37.532711", 
+ "modified_by": "Administrator", 
+ "module": "Stock", 
+ "name": "commandes a expedier", 
+ "owner": "Administrator", 
+ "query": "SELECT  `tabProduction Order`.customer as \"Customer:Link/Customer:120\",\n\t`tabProduction Order`.name as \"OF:Link/Production Order:80\",\n\t`tabProduction Order`.sales_order as \"Commande:Link/Sales Order:100\",\n\t`tabProduction Order`.reference_client as \"Num\u00e9ro PO::120\",\n\t`tabProduction Order`.production_item as \"Item:Link/Item:240\",\n\t`tabProduction Order`.batch_no as \"Batch:Link/Batch:120\",\n\t`tabProduction Order`.qty as \"Qt\u00e9 com.:Float:80\",\n\t`tabProduction Order`.produced_qty as \"Qt\u00e9 prod.:Float:80\",\n\tSUM(`tabDelivery Note Item`.qty) as \"Delivered Qty:Float:80\"\nFROM `tabProduction Order` \n\tLEFT JOIN `tabDelivery Note Item` ON\n\t`tabProduction Order`.batch_no = `tabDelivery Note Item`.batch_no\nWHERE `tabProduction Order`.status = \"Completed\"\nGROUP BY `tabProduction Order`.name\nHAVING `tabProduction Order`.produced_qty > SUM(`tabDelivery Note Item`.qty) OR SUM(`tabDelivery Note Item`.qty) IS NULL", 
+ "ref_doctype": "Delivery Note", 
+ "report_name": "commandes a expedier", 
+ "report_type": "Query Report"
+}

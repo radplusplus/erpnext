@@ -1,0 +1,22 @@
+{
+ "align_labels_left": 0, 
+ "creation": "2017-08-15 09:46:27.324061", 
+ "custom_format": 0, 
+ "disabled": 0, 
+ "doc_type": "Stock Entry", 
+ "docstatus": 0, 
+ "doctype": "Print Format", 
+ "font": "Default", 
+ "format_data": "[{\"fieldname\": \"print_heading_template\", \"fieldtype\": \"Custom HTML\", \"options\": \"<div class=\\\"print-heading\\\">\\t\\t\\t\\t\\n<h2><small>{{ doc.name }}</small>\\t\\t\\t\\t</h2></div>\"}, {\"fieldtype\": \"Section Break\", \"label\": \"\"}, {\"fieldtype\": \"Column Break\"}, {\"print_hide\": 0, \"fieldname\": \"purpose\", \"label\": \"Purpose\"}, {\"print_hide\": 0, \"fieldname\": \"purchase_order\", \"label\": \"Purchase Order\"}, {\"print_hide\": 0, \"fieldname\": \"shipper\", \"align\": \"left\", \"label\": \"Customer\"}, {\"fieldtype\": \"Column Break\"}, {\"print_hide\": 0, \"fieldname\": \"posting_date\", \"align\": \"left\", \"label\": \"Posting Date\"}, {\"print_hide\": 0, \"fieldname\": \"po_no\", \"align\": \"left\", \"label\": \"Shipping Number\"}, {\"fieldtype\": \"Section Break\", \"label\": \"\"}, {\"fieldtype\": \"Column Break\"}, {\"print_hide\": 0, \"fieldname\": \"remarks\", \"label\": \"Remarks\"}, {\"fieldtype\": \"Section Break\", \"label\": \"\"}, {\"fieldtype\": \"Column Break\"}, {\"print_hide\": 0, \"fieldname\": \"quantite_finale\", \"label\": \"Quantit\\u00e9 finale\"}, {\"fieldtype\": \"Column Break\"}, {\"fieldtype\": \"Section Break\", \"label\": \"\"}, {\"fieldtype\": \"Column Break\"}, {\"visible_columns\": [{\"print_hide\": 0, \"fieldname\": \"batch_no\", \"print_width\": \"100\"}, {\"print_hide\": 0, \"fieldname\": \"customer_batch_number\", \"print_width\": \"80\"}, {\"print_hide\": 0, \"fieldname\": \"qty\", \"print_width\": \"60\"}, {\"print_hide\": 0, \"fieldname\": \"species\", \"print_width\": \"80\"}, {\"print_hide\": 0, \"fieldname\": \"construction\", \"print_width\": \"80\"}, {\"print_hide\": 0, \"fieldname\": \"flooring_grade\", \"print_width\": \"80\"}, {\"print_hide\": 0, \"fieldname\": \"flooring_width\", \"print_width\": \"60\"}, {\"print_hide\": 0, \"fieldname\": \"thickness\", \"print_width\": \"60\"}, {\"print_hide\": 0, \"fieldname\": \"micro_v\", \"print_width\": \"60\"}, {\"print_hide\": 0, \"fieldname\": \"qty_per_box\", \"print_width\": \"80\"}, {\"print_hide\": 0, \"fieldname\": \"commentaires\", \"print_width\": \"\"}], \"print_hide\": 0, \"fieldname\": \"items\", \"label\": \"Items\"}, {\"fieldtype\": \"Section Break\", \"label\": \"Customer\"}, {\"fieldtype\": \"Column Break\"}, {\"print_hide\": 0, \"fieldname\": \"supplier_name\", \"label\": \"Supplier Name\"}, {\"print_hide\": 0, \"fieldname\": \"supplier_address\", \"label\": \"Supplier Address\"}, {\"fieldtype\": \"Column Break\"}, {\"print_hide\": 0, \"fieldname\": \"customer_name\", \"label\": \"Customer Name\"}, {\"print_hide\": 0, \"fieldname\": \"customer_address\", \"label\": \"Customer Address\"}]", 
+ "idx": 0, 
+ "line_breaks": 0, 
+ "modified": "2017-08-28 15:44:51.471875", 
+ "modified_by": "Administrator", 
+ "module": "Stock", 
+ "name": "R\u00e9sum\u00e9 d'arrivage", 
+ "owner": "Administrator", 
+ "print_format_builder": 1, 
+ "print_format_type": "Server", 
+ "show_section_headings": 0, 
+ "standard": "Yes"
+}
