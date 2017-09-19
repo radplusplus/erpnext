@@ -434,7 +434,7 @@
  "issingle": 0, 
  "istable": 0, 
  "max_attachments": 0, 
- "modified": "2016-12-15 14:51:43.312590", 
+ "modified": "2017-09-18 15:49:54.072709", 
  "modified_by": "Administrator", 
  "module": "Stock", 
  "name": "Bin", 
@@ -444,7 +444,7 @@
    "amend": 0, 
    "apply_user_permissions": 0, 
    "cancel": 0, 
-   "create": 0, 
+   "create": 1, 
    "delete": 0, 
    "email": 1, 
    "export": 0, 
@@ -459,7 +459,7 @@
    "set_user_permissions": 0, 
    "share": 0, 
    "submit": 0, 
-   "write": 0
+   "write": 1
   }, 
   {
    "amend": 0, 
@@ -509,5 +509,6 @@
  "read_only_onload": 0, 
  "search_fields": "item_code,warehouse", 
  "sort_order": "ASC", 
+ "track_changes": 1, 
  "track_seen": 0
 }

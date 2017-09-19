@@ -1,0 +1,22 @@
+{
+ "align_labels_left": 0, 
+ "creation": "2017-09-19 08:51:12.000872", 
+ "custom_format": 0, 
+ "disabled": 0, 
+ "doc_type": "Warranty Claim", 
+ "docstatus": 0, 
+ "doctype": "Print Format", 
+ "font": "Default", 
+ "format_data": "[{\"fieldname\": \"print_heading_template\", \"fieldtype\": \"Custom HTML\", \"options\": \"<div class=\\\"print-heading\\\">\\t\\t\\t\\t<h2>ARM<br><small>{{ doc.name }}</small>\\t\\t\\t\\t</h2></div>\"}, {\"fieldtype\": \"Section Break\", \"label\": \"\"}, {\"fieldtype\": \"Column Break\"}, {\"print_hide\": 0, \"fieldname\": \"complaint_date\", \"label\": \"Issue Date\"}, {\"print_hide\": 0, \"fieldname\": \"status\", \"label\": \"Status\"}, {\"fieldtype\": \"Column Break\"}, {\"print_hide\": 0, \"fieldname\": \"sales_order\", \"label\": \"Sales Order\"}, {\"fieldtype\": \"Section Break\", \"label\": \"Customer\"}, {\"fieldtype\": \"Column Break\"}, {\"print_hide\": 0, \"fieldname\": \"customer_name\", \"label\": \"Customer Name\"}, {\"print_hide\": 0, \"fieldname\": \"contact_display\", \"label\": \"Contact\"}, {\"print_hide\": 0, \"fieldname\": \"contact_mobile\", \"label\": \"Mobile No\"}, {\"print_hide\": 0, \"fieldname\": \"contact_email\", \"label\": \"Contact Email\"}, {\"fieldtype\": \"Column Break\"}, {\"print_hide\": 0, \"fieldname\": \"address_display\", \"label\": \"Address\"}, {\"print_hide\": 0, \"fieldname\": \"service_address\", \"label\": \"Service Address\"}, {\"fieldtype\": \"Section Break\", \"label\": \"\"}, {\"fieldtype\": \"Column Break\"}, {\"print_hide\": 0, \"fieldname\": \"complaint\", \"label\": \"Issue\"}, {\"fieldtype\": \"Section Break\", \"label\": \"Item\"}, {\"fieldtype\": \"Column Break\"}, {\"print_hide\": 0, \"fieldname\": \"item_code\", \"label\": \"Item Code\"}, {\"print_hide\": 0, \"fieldname\": \"item_name\", \"label\": \"Item Name\"}, {\"print_hide\": 0, \"fieldname\": \"description\", \"label\": \"Description\"}, {\"fieldtype\": \"Column Break\"}, {\"print_hide\": 0, \"fieldname\": \"warranty_amc_status\", \"label\": \"Warranty / AMC Status\"}, {\"print_hide\": 0, \"fieldname\": \"warranty_expiry_date\", \"label\": \"Warranty Expiry Date\"}, {\"print_hide\": 0, \"fieldname\": \"amc_expiry_date\", \"label\": \"AMC Expiry Date\"}, {\"fieldtype\": \"Section Break\", \"label\": \"Resolution\"}, {\"fieldtype\": \"Column Break\"}, {\"print_hide\": 0, \"fieldname\": \"resolution_date\", \"label\": \"Resolution Date\"}, {\"print_hide\": 0, \"fieldname\": \"resolved_by\", \"label\": \"Resolved By\"}, {\"print_hide\": 0, \"fieldname\": \"resolution_details\", \"label\": \"Resolution Details\"}, {\"fieldtype\": \"Section Break\", \"label\": \"More\"}, {\"fieldtype\": \"Column Break\"}, {\"fieldtype\": \"Column Break\"}, {\"print_hide\": 0, \"fieldname\": \"complaint_raised_by\", \"label\": \"Raised By\"}, {\"print_hide\": 0, \"fieldname\": \"from_company\", \"label\": \"From Company\"}]", 
+ "idx": 0, 
+ "line_breaks": 0, 
+ "modified": "2017-09-19 08:53:14.663864", 
+ "modified_by": "Administrator", 
+ "module": "Support", 
+ "name": "ARM", 
+ "owner": "Administrator", 
+ "print_format_builder": 1, 
+ "print_format_type": "Server", 
+ "show_section_headings": 0, 
+ "standard": "Yes"
+}

@@ -1066,7 +1066,7 @@
  "issingle": 0, 
  "istable": 0, 
  "max_attachments": 0, 
- "modified": "2016-11-07 05:26:57.948263", 
+ "modified": "2017-09-19 11:36:57.395772", 
  "modified_by": "Administrator", 
  "module": "Selling", 
  "name": "Customer", 
@@ -1078,7 +1078,7 @@
    "apply_user_permissions": 0, 
    "cancel": 0, 
    "create": 1, 
-   "delete": 0, 
+   "delete": 1, 
    "email": 1, 
    "export": 0, 
    "if_owner": 0, 
@@ -1113,7 +1113,7 @@
    "set_user_permissions": 0, 
    "share": 0, 
    "submit": 0, 
-   "write": 0
+   "write": 1
   }, 
   {
    "amend": 0, 
@@ -1269,5 +1269,6 @@
  "search_fields": "customer_name,customer_group,territory", 
  "sort_order": "ASC", 
  "title_field": "customer_name", 
+ "track_changes": 0, 
  "track_seen": 0
 }
