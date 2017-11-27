@@ -1,3 +1,5 @@
+# coding=utf-8
+
 from __future__ import unicode_literals
 from frappe import _
 
@@ -127,7 +129,6 @@ def get_data():
 		{
 			"module_name": "POS",
 			"color": "#589494",
-			"icon": "fa fa-th",
 			"icon": "octicon octicon-credit-card",
 			"type": "page",
 			"link": "pos",
@@ -229,15 +230,6 @@ def get_data():
 			"type": "list"
 		},
 		{
-			"module_name": "Assessment",
-			"color": "#8a70be",
-			"icon": "fa fa-file-text",
-			"label": _("Assessment"),
-			"link": "List/Assessment",
-			"_doctype": "Assessment",
-			"type": "list"
-		},
-		{
 			"module_name": "Fees",
 			"color": "#83C21E",
 			"icon": "fa fa-money",
@@ -270,5 +262,36 @@ def get_data():
 			"icon": "octicon octicon-mortar-board",
 			"type": "module",
 			"label": _("Schools")
+		},
+		{
+			"module_name": "Healthcare",
+			"color": "#FF888B",
+			"icon": "octicon octicon-plus",
+			"type": "module",
+			"label": _("Healthcare"),
+		},
+		{
+			"module_name": "Hub",
+			"color": "#009248",
+			"icon": "/assets/erpnext/images/hub_logo.svg",
+			"type": "page",
+			"link": "hub",
+			"label": _("Hub")
+		},
+		{
+			"module_name": "Data Import Tool",
+			"color": "#7f8c8d",
+			"icon": "octicon octicon-circuit-board",
+			"type": "page",
+			"link": "data-import-tool",
+			"label": _("Data Import Tool")
+		},
+		{
+			"module_name": "Restaurant",
+			"color": "#EA81E8",
+			"icon": "🍔",
+			"_doctype": "Restaurant",
+			"link": "List/Restaurant",
+			"label": _("Restaurant")
 		}
 	]

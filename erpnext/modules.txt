@@ -1,7 +1,6 @@
 Accounts
 CRM
 Buying
-Fleet Management
 Projects
 Selling
 Setup
@@ -15,3 +14,6 @@ Hub Node
 Portal
 Maintenance
 Schools
+Regional
+Healthcare
+Restaurant

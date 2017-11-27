@@ -2,7 +2,7 @@
 # License: GNU General Public License v3. See license.txt
 
 from __future__ import unicode_literals
-import frappe
+import frappe, erpnext
 import frappe.defaults
 from frappe import msgprint, _
 from frappe.utils import cstr, flt, cint
@@ -14,8 +14,8 @@ class OpeningEntryAccountError(frappe.ValidationError): pass
 class EmptyStockReconciliationItemsError(frappe.ValidationError): pass
 
 class StockReconciliation(StockController):
-	def __init__(self, arg1, arg2=None):
-		super(StockReconciliation, self).__init__(arg1, arg2)
+	def __init__(self, *args, **kwargs):
+		super(StockReconciliation, self).__init__(*args, **kwargs)
 		self.head_row = ["Item Code", "Warehouse", "Quantity", "Valuation Rate"]
 
 	def validate(self):
@@ -117,6 +117,10 @@ class StockReconciliation(StockController):
 					if buying_rate:
 						row.valuation_rate = buying_rate
 
+					else:
+						# get valuation rate from Item
+						row.valuation_rate = frappe.get_value('Item', row.item_code, 'valuation_rate')
+
 		# throw all validation messages
 		if self.validation_messages:
 			for msg in self.validation_messages:
@@ -139,18 +143,16 @@ class StockReconciliation(StockController):
 
 			# item should not be serialized
 			if item.has_serial_no == 1:
-				raise frappe.ValidationError, _("Serialized Item {0} cannot be updated \
-					using Stock Reconciliation").format(item_code)
+				raise frappe.ValidationError(_("Serialized Item {0} cannot be updated using Stock Reconciliation, please use Stock Entry").format(item_code))
 
 			# item managed batch-wise not allowed
 			if item.has_batch_no == 1:
-				raise frappe.ValidationError, _("Item: {0} managed batch-wise, can not be reconciled using \
-					Stock Reconciliation, instead use Stock Entry").format(item_code)
+				raise frappe.ValidationError(_("Batched Item {0} cannot be updated using Stock Reconciliation, instead use Stock Entry").format(item_code))
 
 			# docstatus should be < 2
 			validate_cancelled_item(item_code, item.docstatus, verbose=0)
 
-		except Exception, e:
+		except Exception as e:
 			self.validation_messages.append(_("Row # ") + ("%d: " % (row_num)) + cstr(e))
 
 	def update_stock_ledger(self):
@@ -229,7 +231,7 @@ class StockReconciliation(StockController):
 			self.expense_account, self.cost_center)
 
 	def validate_expense_account(self):
-		if not cint(frappe.defaults.get_global_default("auto_accounting_for_stock")):
+		if not cint(erpnext.is_perpetual_inventory_enabled(self.company)):
 			return
 
 		if not self.expense_account:

@@ -5,9 +5,13 @@
  "disabled": 0, 
  "docstatus": 0, 
  "doctype": "Report", 
- "idx": 1, 
+ "idx": 3, 
  "is_standard": "Yes", 
+<<<<<<< HEAD
  "modified": "2017-09-07 11:29:35.585106", 
+=======
+ "modified": "2017-02-24 20:10:40.304828", 
+>>>>>>> upstream/master
  "modified_by": "Administrator", 
  "module": "Manufacturing", 
  "name": "Production Orders in Progress", 
@@ -15,5 +19,13 @@
  "query": "SELECT\n  `tabProduction Order`.name as \"Production Order:Link/Production Order:140\",\n  `tabProduction Order`.customer as \"Customer:Link/Customer:150\",\n  `tabProduction Order`.sales_order as \"Sales Order:Link/Sales Order:80\",\n  `tabProduction Order`.reference_client as \"Reference::140\",\n  `tabProduction Order`.creation as \"Date:Date:80\",\n  `tabProduction Order`.production_item as \"Item:Link/Item:300\",\n  `tabProduction Order`.qty as \"To Produce:Int:80\",\n  `tabProduction Order`.produced_qty as \"Produced:Int:80\"\nFROM\n  `tabProduction Order`\nWHERE\n  `tabProduction Order`.docstatus=1\n  AND `tabProduction Order`.status= \"In Process\"\n  AND ifnull(`tabProduction Order`.produced_qty,0) < `tabProduction Order`.qty\n  AND EXISTS (SELECT name from `tabStock Entry` where production_order =`tabProduction Order`.name) ", 
  "ref_doctype": "Production Order", 
  "report_name": "Production Orders in Progress", 
- "report_type": "Query Report"
+ "report_type": "Query Report", 
+ "roles": [
+  {
+   "role": "Manufacturing User"
+  }, 
+  {
+   "role": "Stock User"
+  }
+ ]
 }

@@ -31,6 +31,8 @@ class TestPOSProfile(unittest.TestCase):
 		frappe.db.sql("delete from `tabPOS Profile`")
 
 def make_pos_profile():
+	frappe.db.sql("delete from `tabPOS Profile`")
+
 	pos_profile = frappe.get_doc({
 		"company": "_Test Company",
 		"cost_center": "_Test Cost Center - _TC",
@@ -39,9 +41,11 @@ def make_pos_profile():
 		"expense_account": "_Test Account Cost for Goods Sold - _TC",
 		"income_account": "Sales - _TC",
 		"name": "_Test POS Profile",
+		"pos_profile_name": "_Test POS Profile",
 		"naming_series": "_T-POS Profile-",
 		"selling_price_list": "_Test Price List",
 		"territory": "_Test Territory",
+		"customer_group": frappe.db.get_value('Customer Group', {'is_group': 0}, 'name'),
 		"warehouse": "_Test Warehouse - _TC",
 		"write_off_account": "_Test Write Off - _TC",
 		"write_off_cost_center": "_Test Write Off Cost Center - _TC"

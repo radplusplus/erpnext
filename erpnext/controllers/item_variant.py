@@ -5,29 +5,49 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.utils import cstr, flt
-import json
-import radplusplus
+import json, copy
 
 class ItemVariantExistsError(frappe.ValidationError): pass
 class InvalidItemAttributeValueError(frappe.ValidationError): pass
 class ItemTemplateCannotHaveStock(frappe.ValidationError): pass
 
 @frappe.whitelist()
-def get_variant(template, args, variant=None):
-	"""Validates Attributes and their Values, then looks for an exactly matching Item Variant
+def get_variant(template, args=None, variant=None, manufacturer=None,
+	manufacturer_part_no=None):
+	"""Validates Attributes and their Values, then looks for an exactly
+		matching Item Variant
 
 		:param item: Template Item
 		:param args: A dictionary with "Attribute" as key and "Attribute Value" as value
 	"""
-	
-	if isinstance(args, basestring):
-		args = json.loads(args)
+	item_template = frappe.get_doc('Item', template)
 
-	if not args:
-		frappe.throw(_("Please specify at least one attribute in the Attributes table"))
-	from radplusplus.radplusplus.controllers.item_variant import get_variant as get_variant_radpp
-	return get_variant_radpp(template, args, variant)
-	#return find_variant(template, args, variant)
+	if item_template.variant_based_on=='Manufacturer' and manufacturer:
+		return make_variant_based_on_manufacturer(item_template, manufacturer,
+			manufacturer_part_no)
+	else:
+		if isinstance(args, basestring):
+			args = json.loads(args)
+
+		if not args:
+			frappe.throw(_("Please specify at least one attribute in the Attributes table"))
+		return find_variant(template, args, variant)
+
+def make_variant_based_on_manufacturer(template, manufacturer, manufacturer_part_no):
+	'''Make and return a new variant based on manufacturer and
+		manufacturer part no'''
+	from frappe.model.naming import append_number_if_name_exists
+
+	variant = frappe.new_doc('Item')
+
+	copy_attributes_to_variant(template, variant)
+
+	variant.manufacturer = manufacturer
+	variant.manufacturer_part_no = manufacturer_part_no
+
+	variant.item_code = append_number_if_name_exists('Item', template.name)
+
+	return variant
 
 def validate_item_variant_attributes(item, args=None):
 	if isinstance(item, basestring):
@@ -134,6 +154,7 @@ def create_variant(item, args):
 
 	template = frappe.get_doc("Item", item)
 	variant = frappe.new_doc("Item")
+	variant.variant_based_on = 'Item Attribute'
 	variant_attributes = []
 
 	for d in template.attributes:
@@ -144,25 +165,54 @@ def create_variant(item, args):
 
 	variant.set("attributes", variant_attributes)
 	copy_attributes_to_variant(template, variant)
-	make_variant_item_code(template.item_code, variant)
+	make_variant_item_code(template.item_code, template.item_name, variant)
 
 	return variant
 
 def copy_attributes_to_variant(item, variant):
 	from frappe.model import no_value_fields
+
+	# copy non no-copy fields
+
+	exclude_fields = ["naming_series", "item_code", "item_name", "show_in_website",
+		"show_variant_in_website", "opening_stock", "variant_of", "valuation_rate"]
+
+	if item.variant_based_on=='Manufacturer':
+		# don't copy manufacturer values if based on part no
+		exclude_fields += ['manufacturer', 'manufacturer_part_no']
+
+	allow_fields = [d.field_name for d in frappe.get_all("Variant Field", fields = ['field_name'])]
+	if "variant_based_on" not in allow_fields:
+		allow_fields.append("variant_based_on")
 	for field in item.meta.fields:
-		if field.fieldtype not in no_value_fields and (not field.no_copy)\
-			and field.fieldname not in ("item_code", "item_name", "show_in_website"):
+		# "Table" is part of `no_value_field` but we shouldn't ignore tables
+		if (field.reqd or field.fieldname in allow_fields) and field.fieldname not in exclude_fields:
 			if variant.get(field.fieldname) != item.get(field.fieldname):
-				variant.set(field.fieldname, item.get(field.fieldname))
+				if field.fieldtype == "Table":
+					variant.set(field.fieldname, [])
+					for d in item.get(field.fieldname):
+						row = copy.deepcopy(d)
+						if row.get("name"):
+							row.name = None
+						variant.append(field.fieldname, row)
+				else:
+					variant.set(field.fieldname, item.get(field.fieldname))
+
 	variant.variant_of = item.name
 	variant.has_variants = 0
-	if variant.attributes:
-		variant.description += "\n"
-		for d in variant.attributes:
-			variant.description += "<p>" + d.attribute + ": " + cstr(d.attribute_value) + "</p>"
+	if not variant.description:
+		variant.description = ""
 
-def make_variant_item_code(template_item_code, variant):
+	if item.variant_based_on=='Item Attribute':
+		if variant.attributes:
+			attributes_description = ""
+			for d in variant.attributes:
+				attributes_description += "<div>" + d.attribute + ": " + cstr(d.attribute_value) + "</div>"
+			
+			if attributes_description not in variant.description:
+					variant.description += attributes_description
+
+def make_variant_item_code(template_item_code, template_item_name, variant):
 	"""Uses template's item code and abbreviations to make variant's item code"""
 	if variant.item_code:
 		return
@@ -172,7 +222,7 @@ def make_variant_item_code(template_item_code, variant):
 		item_attribute = frappe.db.sql("""select i.numeric_values, v.abbr
 			from `tabItem Attribute` i left join `tabItem Attribute Value` v
 				on (i.name=v.parent)
-			where i.name=%(attribute)s and v.attribute_value=%(attribute_value)s""", {
+			where i.name=%(attribute)s and (v.attribute_value=%(attribute_value)s or i.numeric_values = 1)""", {
 				"attribute": attr.attribute,
 				"attribute_value": attr.attribute_value
 			}, as_dict=True)
@@ -183,14 +233,9 @@ def make_variant_item_code(template_item_code, variant):
 			# 	frappe.bold(attr.attribute_value)), title=_('Invalid Attribute'),
 			# 	exc=InvalidItemAttributeValueError)
 
-		if item_attribute[0].numeric_values:
-			# don't generate item code if one of the attributes is numeric
-			return
-
-		abbreviations.append(item_attribute[0].abbr)
+		abbr_or_value = cstr(attr.attribute_value) if item_attribute[0].numeric_values else item_attribute[0].abbr
+		abbreviations.append(abbr_or_value)
 
 	if abbreviations:
 		variant.item_code = "{0}-{1}".format(template_item_code, "-".join(abbreviations))
-
-	if variant.item_code:
-		variant.item_name = variant.item_code
+		variant.item_name = "{0}-{1}".format(template_item_name, "-".join(abbreviations))

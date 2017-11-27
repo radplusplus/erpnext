@@ -112,19 +112,21 @@ class TestPurchaseOrder(unittest.TestCase):
 		self.assertEquals(get_ordered_qty(item_code="_Test Item", warehouse="_Test Warehouse - _TC"), existing_ordered_qty)
 		
 	def test_group_same_items(self):
+		frappe.db.set_value("Buying Settings", None, "allow_multiple_items", 1)
 		frappe.get_doc({
 			"doctype": "Purchase Order",
 			"company": "_Test Company",
 			"supplier" : "_Test Supplier",
 			"is_subcontracted" : "No",
+			"schedule_date": add_days(nowdate(), 1),
 			"currency" : frappe.db.get_value("Company", "_Test Company", "default_currency"),
 			"conversion_factor" : 1,
 			"items" : get_same_items(),
 			"group_same_items": 1
-		}).insert()
+			}).insert(ignore_permissions=True)
 
 		
-def get_same_items():	
+def get_same_items():
 	return [
 				{
 					"item_code": "_Test FG Item",
@@ -148,6 +150,7 @@ def create_purchase_order(**args):
 	if args.transaction_date:
 		po.transaction_date = args.transaction_date
 
+	po.schedule_date = add_days(nowdate(), 1)
 	po.company = args.company or "_Test Company"
 	po.supplier = args.customer or "_Test Supplier"
 	po.is_subcontracted = args.is_subcontracted or "No"

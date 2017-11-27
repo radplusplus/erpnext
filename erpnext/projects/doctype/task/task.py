@@ -47,15 +47,15 @@ class Task(Document):
 
 			from frappe.desk.form.assign_to import clear
 			clear(self.doctype, self.name)
-			
+
 	def validate_progress(self):
 		if self.progress > 100:
 			frappe.throw(_("Progress % for a task cannot be more than 100."))
 
 	def update_depends_on(self):
-		depends_on_tasks = ""
+		depends_on_tasks = self.depends_on_tasks or ""
 		for d in self.depends_on:
-			if d.task:
+			if d.task and not d.task in depends_on_tasks:
 				depends_on_tasks += d.task + ","
 		self.depends_on_tasks = depends_on_tasks
 
@@ -63,6 +63,12 @@ class Task(Document):
 		self.check_recursion()
 		self.reschedule_dependent_tasks()
 		self.update_project()
+		self.unassign_todo()
+
+	def unassign_todo(self):
+		if self.status == "Closed" or self.status == "Cancelled":
+			from frappe.desk.form.assign_to import clear
+			clear(self.doctype, self.name)
 
 	def update_total_expense_claim(self):
 		self.total_expense_claim = frappe.db.sql("""select sum(total_sanctioned_amount) from `tabExpense Claim`
@@ -105,20 +111,22 @@ class Task(Document):
 	def reschedule_dependent_tasks(self):
 		end_date = self.exp_end_date or self.act_end_date
 		if end_date:
-			for task_name in frappe.db.sql("select name from `tabTask` as parent where %s in \
-				(select task from `tabTask Depends On` as child where parent.name = child.parent )", self.name, as_dict=1):
+			for task_name in frappe.db.sql("""select name from `tabTask` as parent where parent.project = %(project)s and parent.name in \
+				(select parent from `tabTask Depends On` as child where child.task = %(task)s and child.project = %(project)s)""",
+				{'project': self.project, 'task':self.name }, as_dict=1):
+
 				task = frappe.get_doc("Task", task_name.name)
-				if task.exp_start_date and task.exp_end_date and task.exp_start_date < getdate(end_date) and task.status == "Open" :
+				if task.exp_start_date and task.exp_end_date and task.exp_start_date < getdate(end_date) and task.status == "Open":
 					task_duration = date_diff(task.exp_end_date, task.exp_start_date)
 					task.exp_start_date = add_days(end_date, 1)
 					task.exp_end_date = add_days(task.exp_start_date, task_duration)
 					task.flags.ignore_recursion_check = True
 					task.save()
-					
+
 	def has_webform_permission(doc):
 		project_user = frappe.db.get_value("Project User", {"parent": doc.project, "user":frappe.session.user} , "user")
 		if project_user:
-			return True				
+			return True
 
 @frappe.whitelist()
 def get_events(start, end, filters=None):
@@ -152,7 +160,7 @@ def get_project(doctype, txt, searchfield, start, page_len, filters):
 			order by name
 			limit %(start)s, %(page_len)s """ % {'key': searchfield,
 			'txt': "%%%s%%" % frappe.db.escape(txt), 'mcond':get_match_cond(doctype),
-			'start': start, 'page_len': page_len})			
+			'start': start, 'page_len': page_len})
 
 
 @frappe.whitelist()
@@ -168,4 +176,5 @@ def set_tasks_as_overdue():
 		where exp_end_date is not null
 		and exp_end_date < CURDATE()
 		and `status` not in ('Closed', 'Cancelled')""")
-		
+
+

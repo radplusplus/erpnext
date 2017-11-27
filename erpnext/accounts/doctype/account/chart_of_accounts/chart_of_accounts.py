@@ -78,6 +78,7 @@ def get_chart(chart_template, existing_company=None):
 		for folder in folders:
 			path = os.path.join(os.path.dirname(__file__), folder)
 			for fname in os.listdir(path):
+				fname = frappe.as_unicode(fname)
 				if fname.endswith(".json"):
 					with open(os.path.join(path, fname), "r") as f:
 						chart = f.read()
@@ -105,6 +106,7 @@ def get_charts_for_country(country):
 			path = os.path.join(os.path.dirname(__file__), folder)
 
 			for fname in os.listdir(path):
+				fname = frappe.as_unicode(fname)
 				if (fname.startswith(country_code) or fname.startswith(country)) and fname.endswith(".json"):
 					with open(os.path.join(path, fname), "r") as f:
 						_get_chart_name(f.read())
@@ -125,14 +127,14 @@ def get_account_tree_from_existing_company(existing_company):
 	account_tree = {}
 
 	# fill in tree starting with root accounts (those with no parent)
-	build_account_tree(account_tree, None, all_accounts)
-	
+	if all_accounts:
+		build_account_tree(account_tree, None, all_accounts)
 	return account_tree
 	
 def build_account_tree(tree, parent, all_accounts):
 	# find children
-	parent_account = parent.name if parent else None
-	children  = [acc for acc in all_accounts if acc.parent_account == parent_account]
+	parent_account = parent.name if parent else ""
+	children = [acc for acc in all_accounts if cstr(acc.parent_account) == parent_account]
 			
 	# if no children, but a group account
 	if not children and parent.is_group:

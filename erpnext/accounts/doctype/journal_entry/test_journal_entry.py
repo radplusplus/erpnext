@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 import unittest, frappe
 from frappe.utils import flt
+from erpnext.accounts.doctype.account.test_account import get_inventory_account
 from erpnext.exceptions import InvalidAccountCurrency
 
 
@@ -83,7 +84,8 @@ class TestJournalEntry(unittest.TestCase):
 
 		jv = frappe.copy_doc(test_records[0])
 		jv.get("accounts")[0].update({
-			"account": "_Test Warehouse - _TC",
+			"account": get_inventory_account('_Test Company'),
+			"company": "_Test Company",
 			"party_type": None,
 			"party": None
 		})
@@ -171,20 +173,6 @@ class TestJournalEntry(unittest.TestCase):
 		})
 
 		jv.submit()
-		
-	def test_clear_blank_rows(self):
-		je = make_journal_entry("_Test Bank - _TC", "_Test Account Stock Expenses - _TC", 100, save=False)
-		je.append("accounts", {
-			"account": "_Test Cash - _TC",
-			"debit_in_account_currency": 0,
-			"credit_in_account_currency": 0,
-			"exchange_rate": 1
-		})
-		
-		self.assertEqual(len(je.get("accounts")), 3)
-		je.save()
-		self.assertEqual(len(je.get("accounts")), 2)		
-		
 
 def make_journal_entry(account1, account2, amount, cost_center=None, posting_date=None, exchange_rate=1, save=True, submit=False, project=None):
 	if not cost_center:
