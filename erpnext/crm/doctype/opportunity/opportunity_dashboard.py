@@ -6,11 +6,7 @@ def get_data():
 		'fieldname': 'prevdoc_docname',
 		'non_standard_fieldnames': {
 			'Supplier Quotation': 'opportunity',
-<<<<<<< HEAD
-			'Request for Quotation': 'opportunity',
-=======
 			'Quotation': 'opportunity'
->>>>>>> origin/master
 		},
 		'transactions': [
 			{
